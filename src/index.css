@@ -90,6 +90,37 @@ body {
   background: var(--bg-alt);
 }
 
+/* ── Hamburger Button (Mobile) ──────────────────────────────────────────── */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  gap: 0.25rem;
+}
+
+.hamburger span {
+  width: 24px;
+  height: 2.5px;
+  background-color: var(--text-main);
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+}
+
+.hamburger.active span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.active span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
 /* ── Buttons ──────────────────────────────────────────────────────────────── */
 .btn {
   display: inline-flex;
@@ -397,6 +428,34 @@ input::placeholder, textarea::placeholder { color: var(--text-light); }
 /* Mobile: < 640px */
 @media (max-width: 639px) {
   .navbar { padding: 0.75rem 1rem; }
+  .hamburger { display: flex; }
+  .navbar .links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid var(--border);
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+  }
+  .navbar .links.mobile-active {
+    max-height: 400px;
+    padding: 1rem 0;
+  }
+  .navbar .links a {
+    padding: 0.75rem 1rem;
+    border-radius: 0;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+  }
+  .navbar .links a:last-child {
+    border-bottom: none;
+  }
   .navbar-logo { font-size: 1.2rem; }
   .navbar-menu { gap: 0.5rem; }
   .btn { padding: 0.55rem 1rem; font-size: 0.85rem; }
