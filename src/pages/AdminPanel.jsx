@@ -257,7 +257,7 @@ const AdminPanel = () => {
                         {/* Actions */}
                         <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0, flexWrap: 'wrap' }}>
                           {/* Preview button */}
-                          {upload.fileUrl && (
+                          {(upload.fileUrl || upload.filePath) && (
                             <ActionBtn
                               label="View PDF"
                               color="#1D4ED8"
