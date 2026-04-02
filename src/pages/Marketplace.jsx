@@ -3,10 +3,11 @@ import { useState, useEffect, useCallback } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import MoMoModal from '../components/MoMoModal';
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 const StarRating = ({ rating = 0 }) => (
-  <span style={{ color: '#59A310308', fontSize: '0.75rem', letterSpacing: '-0.05em' }}>
+  <span style={{ color: '#6B7280', fontSize: '0.75rem', letterSpacing: '-0.05em' }}>
     {[1,2,3,4,5].map(i => (
       <span key={i} style={{ opacity: i <= Math.round(rating) ? 1 : 0.2 }}>★</span>
     ))}
@@ -20,8 +21,8 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: hovered ? '#59A310113' : '#59A310D0F',
-        border: `1px solid ${hovered ? '#59A31072A' : '#59A31081B'}`,
+        background: hovered ? '#F3F4F6' : '#FFFFFF',
+        border: `1px solid ${hovered ? '#D1D5DB' : '#E5E7EB'}`,
         borderRadius: '14px',
         padding: '1.5rem',
         display: 'flex',
@@ -36,14 +37,14 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
       {/* Top row */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem' }}>
         <div style={{
-          background: '#59A31081B', borderRadius: '10px',
+          background: '#E5E7EB', borderRadius: '10px',
           width: '44px', height: '44px', display: 'flex',
           alignItems: 'center', justifyContent: 'center', fontSize: '1.3rem', flexShrink: 0
         }}>📄</div>
         <div style={{
           fontFamily: "'DM Mono', monospace",
           fontSize: '1.2rem', fontWeight: 700,
-          color: '#59A310308', lineHeight: 1
+          color: '#1F2937', lineHeight: 1
         }}>
           GHS {upload.price?.toFixed(2)}
         </div>
@@ -51,10 +52,10 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
 
       {/* Title & meta */}
       <div>
-        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#59A3104F5', lineHeight: 1.3, marginBottom: '0.4rem' }}>
+        <div style={{ fontFamily: "'Syne', sans-serif", fontWeight: 700, fontSize: '1rem', color: '#111827', lineHeight: 1.3, marginBottom: '0.4rem' }}>
           {upload.title}
         </div>
-        <div style={{ fontSize: '0.78rem', color: '#59A31025B', lineHeight: 1.6 }}>
+        <div style={{ fontSize: '0.78rem', color: '#6B7280', lineHeight: 1.6 }}>
           {upload.courseCode} · {upload.institution} · {upload.year}
         </div>
       </div>
@@ -62,14 +63,14 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
       {/* Rating + downloads */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <StarRating rating={upload.averageRating} />
-        <span style={{ fontSize: '0.75rem', color: '#59A310F46', fontFamily: "'DM Mono', monospace" }}>
+        <span style={{ fontSize: '0.75rem', color: '#9CA3AF', fontFamily: "'DM Mono', monospace" }}>
           ↓ {upload.downloadCount || 0}
         </span>
       </div>
 
       {/* Uploader */}
-      <div style={{ fontSize: '0.78rem', color: '#59A310F46', borderTop: '1px solid #59A31081B', paddingTop: '0.75rem' }}>
-        By <span style={{ color: '#59A31025B' }}>{upload.uploader?.name || 'Anonymous'}</span>
+      <div style={{ fontSize: '0.78rem', color: '#9CA3AF', borderTop: '1px solid #E5E7EB', paddingTop: '0.75rem' }}>
+        By <span style={{ color: '#6B7280' }}>{upload.uploader?.name || 'Anonymous'}</span>
       </div>
 
       {/* Actions */}
@@ -95,7 +96,7 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
             disabled={buying === upload._id}
             style={{
               padding: '0.7rem', borderRadius: '9px', border: 'none',
-              background: '#59A310308', color: '#59A31090B',
+              background: '#059669', color: '#FFFFFF',
               fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.85rem',
               cursor: buying === upload._id ? 'not-allowed' : 'pointer',
               opacity: buying === upload._id ? 0.6 : 1,
@@ -111,7 +112,7 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
               disabled={buying === upload._id}
               style={{
                 padding: '0.7rem', borderRadius: '9px', border: 'none',
-                background: '#59A310308', color: '#59A31090B',
+                background: '#059669', color: '#FFFFFF',
                 fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.85rem',
                 cursor: buying === upload._id ? 'not-allowed' : 'pointer',
                 opacity: buying === upload._id ? 0.6 : 1,
@@ -124,13 +125,13 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
               onClick={onSubscribe}
               style={{
                 padding: '0.6rem', borderRadius: '9px',
-                border: '1px solid #59A31072A', background: 'transparent',
-                color: '#59A31017A', fontFamily: "'Outfit', sans-serif",
+                border: '1px solid #D1D5DB', background: 'transparent',
+                color: '#6B7280', fontFamily: "'Outfit', sans-serif",
                 fontWeight: 600, fontSize: '0.8rem', cursor: 'pointer',
                 transition: 'border-color 0.2s, color 0.2s'
               }}
-              onMouseEnter={e => { e.target.style.borderColor = '#59A31025B'; e.target.style.color = '#59A3101AA'; }}
-              onMouseLeave={e => { e.target.style.borderColor = '#59A31072A'; e.target.style.color = '#59A31017A'; }}
+              onMouseEnter={e => { e.target.style.borderColor = '#9CA3AF'; e.target.style.color = '#1F2937'; }}
+              onMouseLeave={e => { e.target.style.borderColor = '#D1D5DB'; e.target.style.color = '#6B7280'; }}
             >
               ✦ Subscribe GHS 15/mo — Unlimited Access
             </button>
@@ -151,6 +152,11 @@ const Marketplace = () => {
   const [buying, setBuying] = useState(null);
   const [hasSubscription, setHasSubscription] = useState(false);
   const [toast, setToast] = useState(null);
+
+  // MoMo Modal
+  const [momoOpen, setMomoOpen] = useState(false);
+  const [momoMode, setMomoMode] = useState(null);
+  const [momoUploadId, setMomoUploadId] = useState(null);
 
   // Filters
   const [search, setSearch] = useState('');
@@ -204,38 +210,38 @@ const Marketplace = () => {
   // ── Buy / Download ──────────────────────────────────────────────────────────
   const handleBuy = async (uploadId, mode) => {
     if (!user) return navigate('/login');
-    setBuying(uploadId);
-    try {
-      if (mode === 'download') {
+    
+    if (mode === 'download') {
+      setBuying(uploadId);
+      try {
         const res = await api.get(`/uploads/${uploadId}/download`);
         window.open(res.data.fileUrl, '_blank');
         showToast('Download started!');
-      } else {
-        const res = await api.post('/payments/initiate', { uploadId });
-        showToast(res.data.message);
+      } catch (err) {
+        const msg = err.response?.data?.message || 'Something went wrong';
+        if (err.response?.status === 401) {
+          navigate('/login');
+        } else {
+          showToast(msg, 'error');
+        }
+      } finally {
+        setBuying(null);
       }
-    } catch (err) {
-      const msg = err.response?.data?.message || 'Something went wrong';
-      if (err.response?.status === 401) {
-        navigate('/login');
-      } else {
-        showToast(msg, 'error');
-      }
-    } finally {
-      setBuying(null);
+    } else {
+      // mode === 'buy' — open payment modal
+      const upload = uploads.find(u => u._id === uploadId);
+      setMomoMode('per-paper');
+      setMomoUploadId(uploadId);
+      setMomoOpen(true);
     }
   };
 
   // ── Subscribe ───────────────────────────────────────────────────────────────
   const handleSubscribe = async () => {
     if (!user) return navigate('/login');
-    try {
-      const res = await api.post('/subscription');
-      showToast(res.data.message);
-      fetchSubscription();
-    } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to subscribe', 'error');
-    }
+    setMomoMode('subscription');
+    setMomoUploadId(null);
+    setMomoOpen(true);
   };
 
   const handleSearch = (e) => {
@@ -256,9 +262,9 @@ const Marketplace = () => {
         @import url('https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Outfit:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
         .mp-root {
-          background: #59A31090B;
+          background: #1F2937;
           min-height: 100vh;
-          color: #59A3104F5;
+          color: #111827;
           font-family: 'Outfit', sans-serif;
           padding: 2.5rem 1.5rem 5rem;
         }
@@ -283,26 +289,26 @@ const Marketplace = () => {
         }
 
         .mp-input {
-          background: #59A310113;
-          border: 1px solid #59A31072A;
+          background: #F9FAFB;
+          border: 1px solid #D1D5DB;
           border-radius: 10px;
           padding: 0.7rem 1rem;
-          color: #59A3104F5;
+          color: #111827;
           font-family: 'Outfit', sans-serif;
           font-size: 0.88rem;
           outline: none;
           transition: border-color 0.2s;
           width: 100%;
         }
-        .mp-input:focus { border-color: #59A31025B; }
-        .mp-input::placeholder { color: #59A310F46; }
+        .mp-input:focus { border-color: #6B7280; }
+        .mp-input::placeholder { color: #9CA3AF; }
 
         .mp-select {
-          background: #59A310113;
-          border: 1px solid #59A31072A;
+          background: #F9FAFB;
+          border: 1px solid #D1D5DB;
           border-radius: 10px;
           padding: 0.7rem 1rem;
-          color: #59A31017A;
+          color: #6B7280;
           font-family: 'Outfit', sans-serif;
           font-size: 0.85rem;
           outline: none;
@@ -310,7 +316,7 @@ const Marketplace = () => {
           appearance: none;
           min-width: 140px;
         }
-        .mp-select:focus { border-color: #59A31025B; }
+        .mp-select:focus { border-color: #6B7280; }
 
         .mp-search-btn {
           padding: 0.7rem 1.5rem;
@@ -348,9 +354,9 @@ const Marketplace = () => {
             position: 'fixed', top: '1.5rem', right: '1.5rem', zIndex: 999,
             padding: '0.85rem 1.5rem', borderRadius: '10px', fontWeight: 600,
             fontSize: '0.88rem', boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-            background: toast.type === 'error' ? '#59A310A0A' : '#59A310E16',
-            color: toast.type === 'error' ? '#59A3105A5' : '#59A310FAC',
-            border: `1px solid ${toast.type === 'error' ? '#59A310D1D' : '#59A31032D'}`,
+            background: toast.type === 'error' ? '#FEE2E2' : '#DCFCE7',
+            color: toast.type === 'error' ? '#7F1D1D' : '#14532D',
+            border: `1px solid ${toast.type === 'error' ? '#FECACA' : '#BBF7D0'}`,
           }}>
             {toast.msg}
           </div>
@@ -360,7 +366,7 @@ const Marketplace = () => {
 
           {/* Header */}
           <div style={{ marginBottom: '2.5rem' }}>
-            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '0.72rem', color: '#59A31025B', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            <div style={{ fontFamily: "'DM Mono', monospace", fontSize: '0.72rem', color: '#6B7280', letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
               {uploads.length} document{uploads.length !== 1 ? 's' : ''} available
             </div>
             <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: 1.1 }}>
@@ -371,7 +377,7 @@ const Marketplace = () => {
           {/* Subscription banner — show if no sub */}
           {user && !hasSubscription && (
             <div style={{
-              background: 'linear-gradient(135deg, #59A31080A, #59A310108)',
+              background: 'linear-gradient(135deg, #F0F0EC, #E5E7EB)',
               border: '1px solid #59A310200',
               borderRadius: '12px',
               padding: '1.1rem 1.5rem',
@@ -504,6 +510,16 @@ const Marketplace = () => {
           )}
         </div>
       </div>
+
+      <MoMoModal
+        isOpen={momoOpen}
+        onClose={() => setMomoOpen(false)}
+        onSuccess={() => { fetchSubscription(); showToast(momoMode === 'subscription' ? 'Subscription activated!' : 'Payment completed!'); }}
+        title={momoMode === 'subscription' ? 'Monthly Subscription' : 'Buy Document'}
+        amount={momoMode === 'subscription' ? 15 : uploads.find(u => u._id === momoUploadId)?.price}
+        mode={momoMode}
+        uploadId={momoUploadId}
+      />
     </>
   );
 };
