@@ -8,12 +8,14 @@ const MoMoModal = ({ isOpen, onClose, onSuccess, title, amount, mode, uploadId }
   const [widgetOpen, setWidgetOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(true);
 
   useEffect(() => {
     if (isOpen) {
       setTransactionId(null);
       setWidgetOpen(false);
       setError('');
+      setShowModal(true);
     }
   }, [isOpen]);
 
@@ -27,6 +29,7 @@ const MoMoModal = ({ isOpen, onClose, onSuccess, title, amount, mode, uploadId }
       });
       setTransactionId(res.data.transactionId);
       setWidgetOpen(true);
+      setShowModal(false); // hide our overlay so Payloqa widget shows on top
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to start payment. Try again.');
     } finally {
@@ -92,7 +95,7 @@ const MoMoModal = ({ isOpen, onClose, onSuccess, title, amount, mode, uploadId }
         }
       `}</style>
 
-      <div className="momo-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      {showModal && <div className="momo-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
         <div className="momo-modal">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
             <div>
@@ -139,13 +142,13 @@ const MoMoModal = ({ isOpen, onClose, onSuccess, title, amount, mode, uploadId }
             Powered by Payloqa · Mobile Money
           </p>
         </div>
-      </div>
+      </div>}
 
       {transactionId && (
         <PaymentWidget
           config={paymentConfig}
           isOpen={widgetOpen}
-          onClose={() => setWidgetOpen(false)}
+          onClose={() => { setWidgetOpen(false); setShowModal(true); }}
           onSuccess={handlePaymentSuccess}
         />
       )}
