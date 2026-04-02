@@ -51,6 +51,31 @@ const BigNumber = ({ value, prefix = '', color = '#F9FAFB' }) => (
   </div>
 );
 
+
+// ─── Countdown hook ───────────────────────────────────────────────────────────
+const useCountdown = (expiresAt) => {
+  const calc = () => {
+    if (!expiresAt) return null;
+    const diff = new Date(expiresAt) - new Date();
+    if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+    return {
+      days:    Math.floor(diff / (1000 * 60 * 60 * 24)),
+      hours:   Math.floor((diff / (1000 * 60 * 60)) % 24),
+      minutes: Math.floor((diff / (1000 * 60)) % 60),
+      seconds: Math.floor((diff / 1000) % 60),
+      expired: false
+    };
+  };
+  const [timeLeft, setTimeLeft] = useState(calc);
+  useEffect(() => {
+    if (!expiresAt) return;
+    setTimeLeft(calc());
+    const t = setInterval(() => setTimeLeft(calc()), 1000);
+    return () => clearInterval(t);
+  }, [expiresAt]);
+  return timeLeft;
+};
+
 // ─── Main Dashboard ───────────────────────────────────────────────────────────
 const Dashboard = () => {
   const { user } = useAuth();
@@ -118,6 +143,7 @@ const Dashboard = () => {
 
   const hasActiveSub = subscription?.hasSubscription;
   const subData = subscription?.subscription;
+  const countdown = useCountdown(subData?.expiresAt);
 
   return (
     <>
@@ -265,52 +291,91 @@ const Dashboard = () => {
                   </div>
 
                   {/* Subscription card */}
-                  <GlassCard style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div>
-                      <Label>Subscription</Label>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.4rem' }}>
-                        <StatusPill status={hasActiveSub ? 'active' : 'expired'} />
-                        {hasActiveSub && subData?.expiresAt && (
-                          <span style={{ color: '#6B7280', fontSize: '0.82rem' }}>
-                            Expires {new Date(subData.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
-                          </span>
-                        )}
-                        {!hasActiveSub && (
-                          <span style={{ color: '#6B7280', fontSize: '0.82rem' }}>No active plan</span>
+                  <GlassCard>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                      <div>
+                        <Label>Subscription</Label>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '0.4rem' }}>
+                          <StatusPill status={hasActiveSub ? 'active' : 'expired'} />
+                          {!hasActiveSub && <span style={{ color: '#6B7280', fontSize: '0.82rem' }}>No active plan</span>}
+                          {hasActiveSub && subData?.expiresAt && (
+                            <span style={{ color: '#6B7280', fontSize: '0.82rem' }}>
+                              Expires {new Date(subData.expiresAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}
+                            </span>
+                          )}
+                        </div>
+                        {hasActiveSub && (
+                          <div style={{ color: '#4B5563', fontSize: '0.78rem', marginTop: '0.3rem' }}>
+                            Monthly · Unlimited access to all documents
+                          </div>
                         )}
                       </div>
-                      {hasActiveSub && (
-                        <div style={{ color: '#4B5563', fontSize: '0.78rem', marginTop: '0.4rem' }}>
-                          Monthly · Unlimited access to all documents
-                        </div>
+
+                      {!hasActiveSub ? (
+                        <button className="sub-btn" onClick={handleSubscribe} style={{ background: '#F9FAFB', color: '#0D0D0F' }}>
+                          ✦ Subscribe — GHS 15/mo
+                        </button>
+                      ) : (
+                        <button
+                          className="sub-btn"
+                          onClick={async () => {
+                            try {
+                              await api.post('/subscription/cancel');
+                              showToast('Subscription cancelled');
+                              fetchAll();
+                            } catch {
+                              showToast('Failed to cancel', 'error');
+                            }
+                          }}
+                          style={{ background: 'rgba(239,68,68,0.15)', color: '#F87171', border: '1px solid #7F1D1D' }}
+                        >
+                          Cancel Plan
+                        </button>
                       )}
                     </div>
 
-                    {!hasActiveSub ? (
-                      <button
-                        className="sub-btn"
-                        onClick={handleSubscribe}
-                        disabled={false}
-                        style={{ background: '#F9FAFB', color: '#0D0D0F' }}
-                      >
-                        ✦ Subscribe — GHS 15/mo
-                      </button>
-                    ) : (
-                      <button
-                        className="sub-btn"
-                        onClick={async () => {
-                          try {
-                            await api.post('/subscription/cancel');
-                            showToast('Subscription cancelled');
-                            fetchAll();
-                          } catch {
-                            showToast('Failed to cancel', 'error');
-                          }
-                        }}
-                        style={{ background: 'rgba(239,68,68,0.15)', color: '#F87171', border: '1px solid #7F1D1D' }}
-                      >
-                        Cancel Plan
-                      </button>
+                    {/* ── Live countdown ── */}
+                    {hasActiveSub && countdown && !countdown.expired && (
+                      <div style={{ marginTop: '1.25rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.25rem' }}>
+                        <div style={{ fontSize: '0.68rem', color: '#52525B', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: '0.75rem' }}>
+                          Time remaining
+                        </div>
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                          {[
+                            { label: 'Days',    value: countdown.days },
+                            { label: 'Hours',   value: countdown.hours },
+                            { label: 'Minutes', value: countdown.minutes },
+                            { label: 'Seconds', value: countdown.seconds },
+                          ].map(({ label, value }) => (
+                            <div key={label} style={{
+                              flex: 1, background: 'rgba(255,255,255,0.04)',
+                              border: '1px solid rgba(255,255,255,0.08)',
+                              borderRadius: '10px', padding: '0.75rem 0.5rem',
+                              textAlign: 'center'
+                            }}>
+                              <div style={{
+                                fontFamily: "'DM Mono', monospace",
+                                fontSize: 'clamp(1.1rem, 3vw, 1.6rem)',
+                                fontWeight: 700,
+                                color: label === 'Days' ? '#EAB308' : '#F4F4F5',
+                                lineHeight: 1
+                              }}>
+                                {String(value).padStart(2, '0')}
+                              </div>
+                              <div style={{ fontSize: '0.62rem', color: '#52525B', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '0.35rem' }}>
+                                {label}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Expired state */}
+                    {hasActiveSub && countdown?.expired && (
+                      <div style={{ marginTop: '1rem', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem', color: '#F87171', fontSize: '0.82rem' }}>
+                        Your subscription has expired. Renew to continue accessing documents.
+                      </div>
                     )}
                   </GlassCard>
 
