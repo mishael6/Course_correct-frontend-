@@ -31,98 +31,6 @@ const StatCard = ({ label, value, accent, sub }) => (
 
 const TABS = ['Pending Uploads', 'Pending Withdrawals'];
 
-// ─── PDF Preview Modal ────────────────────────────────────────────────────────
-const PreviewModal = ({ url, title, uploadId, onClose }) => {
-  if (!url) return null;
-
-  // Try Google Docs viewer as fallback for cross-origin PDFs
-  const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
-
-  const handleDownload = async () => {
-    try {
-      // Get the download URL from the API 
-      const res = await api.get(`/admin/uploads/${uploadId}/download`);
-      const { fileUrl } = res.data;
-      
-      // Create a temporary download link
-      const link = document.createElement('a');
-      link.href = fileUrl;
-      link.download = `${title}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-    } catch (err) {
-      console.error('Download failed:', err);
-      alert('Failed to download PDF');
-    }
-  };
-
-  return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 2000,
-      background: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(4px)',
-      display: 'flex', flexDirection: 'column',
-      animation: 'fadeIn 0.2s ease'
-    }}>
-      {/* Header */}
-      <div style={{
-        background: '#fff', borderBottom: '1px solid #E8E8E4',
-        padding: '0.85rem 1.5rem', display: 'flex',
-        justifyContent: 'space-between', alignItems: 'center', flexShrink: 0
-      }}>
-        <div>
-          <div style={{ fontSize: '0.72rem', color: '#9A9A9A', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
-            Reviewing document
-          </div>
-          <div style={{ fontWeight: 700, color: '#111', fontSize: '0.95rem', marginTop: '2px' }}>{title}</div>
-        </div>
-        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <button
-            onClick={handleDownload}
-            style={{
-              padding: '0.5rem 1rem', background: '#EAB308',
-              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700,
-              color: '#111', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
-              fontFamily: 'inherit'
-            }}
-          >
-            Download PDF ↓
-          </button>
-          <button
-            onClick={onClose}
-            style={{
-              padding: '0.5rem 1rem', background: '#111', border: 'none',
-              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600,
-              color: '#fff', cursor: 'pointer', fontFamily: 'inherit'
-            }}
-          >
-            Close ✕
-          </button>
-        </div>
-      </div>
-
-      {/* Viewer area */}
-      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-        <iframe
-          src={googleViewerUrl}
-          style={{ width: '100%', height: '100%', border: 'none' }}
-          title={title}
-          allow="autoplay"
-        />
-        {/* Fallback message in case iframe blocks */}
-        <div style={{
-          position: 'absolute', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
-          background: 'rgba(0,0,0,0.7)', color: '#fff', padding: '0.6rem 1.25rem',
-          borderRadius: '999px', fontSize: '0.78rem', fontWeight: 500,
-          pointerEvents: 'none', whiteSpace: 'nowrap'
-        }}>
-          If the preview doesn't load, click "Download PDF" above to view it
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // ─── Action Button ────────────────────────────────────────────────────────────
 const ActionBtn = ({ label, color, bg, hoverBg, loading, onClick, style = {} }) => {
   const [hovered, setHovered] = useState(false);
@@ -156,7 +64,6 @@ const AdminPanel = () => {
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [toast, setToast] = useState(null);
-  const [preview, setPreview] = useState(null); // { url, title }
 
   const showToast = (msg, type = 'success') => {
     setToast({ msg, type });
@@ -235,9 +142,6 @@ const AdminPanel = () => {
           {toast.msg}
         </div>
       )}
-
-      {/* PDF Preview Modal */}
-      {preview && <PreviewModal url={preview.url} title={preview.title} uploadId={preview.uploadId} onClose={() => setPreview(null)} />}
 
       <div style={{ minHeight: '100vh', background: '#F8F8F5', padding: '2rem 1.5rem' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -342,11 +246,11 @@ const AdminPanel = () => {
                           {/* Preview button */}
                           {upload.fileUrl && (
                             <ActionBtn
-                              label="Preview PDF"
+                              label="View PDF"
                               color="#1D4ED8"
                               bg="#EFF6FF"
                               hoverBg="#DBEAFE"
-                              onClick={() => setPreview({ url: upload.fileUrl, title: upload.title, uploadId: upload._id })}
+                              onClick={() => window.open(upload.fileUrl, '_blank')}
                             />
                           )}
                           <ActionBtn
