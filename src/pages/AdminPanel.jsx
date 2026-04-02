@@ -390,7 +390,7 @@ const AdminPanel = () => {
                           </div>
 
                           {/* Status Badge */}
-                          <div style={{{
+                          <div style={{
                             padding: '4px 10px', borderRadius: '999px', fontSize: '0.7rem',
                             fontWeight: 600, textTransform: 'uppercase',
                             background: file.fileExists ? '#DCFCE7' : '#FEE2E2',
