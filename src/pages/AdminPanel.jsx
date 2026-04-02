@@ -34,10 +34,14 @@ const TABS = ['Pending Uploads', 'Pending Withdrawals'];
 // ─── PDF Preview Modal ────────────────────────────────────────────────────────
 const PreviewModal = ({ url, title, onClose }) => {
   if (!url) return null;
+
+  // Try Google Docs viewer as fallback for cross-origin PDFs
+  const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 2000,
-      background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(4px)',
+      background: 'rgba(0,0,0,0.82)', backdropFilter: 'blur(4px)',
       display: 'flex', flexDirection: 'column',
       animation: 'fadeIn 0.2s ease'
     }}>
@@ -48,42 +52,55 @@ const PreviewModal = ({ url, title, onClose }) => {
         justifyContent: 'space-between', alignItems: 'center', flexShrink: 0
       }}>
         <div>
-          <div style={{ fontSize: '0.72rem', color: '#9A9A9A', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Previewing document</div>
+          <div style={{ fontSize: '0.72rem', color: '#9A9A9A', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+            Reviewing document
+          </div>
           <div style={{ fontWeight: 700, color: '#111', fontSize: '0.95rem', marginTop: '2px' }}>{title}</div>
         </div>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
           <a
             href={url}
             target="_blank"
             rel="noreferrer"
+            onClick={() => {}}
             style={{
-              padding: '0.5rem 1rem', background: '#F8F8F5', border: '1px solid #E8E8E4',
-              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600,
-              color: '#111', textDecoration: 'none'
+              padding: '0.5rem 1rem', background: '#EAB308',
+              borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700,
+              color: '#111', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem'
             }}
           >
-            Open in new tab ↗
+            Download PDF ↓
           </a>
           <button
             onClick={onClose}
             style={{
               padding: '0.5rem 1rem', background: '#111', border: 'none',
               borderRadius: '8px', fontSize: '0.82rem', fontWeight: 600,
-              color: '#fff', cursor: 'pointer'
+              color: '#fff', cursor: 'pointer', fontFamily: 'inherit'
             }}
           >
-            Close
+            Close ✕
           </button>
         </div>
       </div>
 
-      {/* PDF iframe */}
-      <div style={{ flex: 1, overflow: 'hidden' }}>
+      {/* Viewer area */}
+      <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         <iframe
-          src={`${url}#toolbar=1&navpanes=0`}
+          src={googleViewerUrl}
           style={{ width: '100%', height: '100%', border: 'none' }}
           title={title}
+          allow="autoplay"
         />
+        {/* Fallback message in case iframe blocks */}
+        <div style={{
+          position: 'absolute', bottom: '1.5rem', left: '50%', transform: 'translateX(-50%)',
+          background: 'rgba(0,0,0,0.7)', color: '#fff', padding: '0.6rem 1.25rem',
+          borderRadius: '999px', fontSize: '0.78rem', fontWeight: 500,
+          pointerEvents: 'none', whiteSpace: 'nowrap'
+        }}>
+          If the preview doesn't load, click "Download PDF" above to view it
+        </div>
       </div>
     </div>
   );
