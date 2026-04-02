@@ -32,11 +32,30 @@ const StatCard = ({ label, value, accent, sub }) => (
 const TABS = ['Pending Uploads', 'Pending Withdrawals'];
 
 // ─── PDF Preview Modal ────────────────────────────────────────────────────────
-const PreviewModal = ({ url, title, onClose }) => {
+const PreviewModal = ({ url, title, uploadId, onClose }) => {
   if (!url) return null;
 
   // Try Google Docs viewer as fallback for cross-origin PDFs
   const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(url)}&embedded=true`;
+
+  const handleDownload = async () => {
+    try {
+      // Get the download URL from the API 
+      const res = await api.get(`/admin/uploads/${uploadId}/download`);
+      const { fileUrl } = res.data;
+      
+      // Create a temporary download link
+      const link = document.createElement('a');
+      link.href = fileUrl;
+      link.download = `${title}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (err) {
+      console.error('Download failed:', err);
+      alert('Failed to download PDF');
+    }
+  };
 
   return (
     <div style={{
@@ -58,19 +77,17 @@ const PreviewModal = ({ url, title, onClose }) => {
           <div style={{ fontWeight: 700, color: '#111', fontSize: '0.95rem', marginTop: '2px' }}>{title}</div>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <a
-            href={url}
-            target="_blank"
-            rel="noreferrer"
-            onClick={() => {}}
+          <button
+            onClick={handleDownload}
             style={{
               padding: '0.5rem 1rem', background: '#EAB308',
               borderRadius: '8px', fontSize: '0.82rem', fontWeight: 700,
-              color: '#111', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '0.35rem'
+              color: '#111', border: 'none', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '0.35rem',
+              fontFamily: 'inherit'
             }}
           >
             Download PDF ↓
-          </a>
+          </button>
           <button
             onClick={onClose}
             style={{
@@ -220,7 +237,7 @@ const AdminPanel = () => {
       )}
 
       {/* PDF Preview Modal */}
-      {preview && <PreviewModal url={preview.url} title={preview.title} onClose={() => setPreview(null)} />}
+      {preview && <PreviewModal url={preview.url} title={preview.title} uploadId={preview.uploadId} onClose={() => setPreview(null)} />}
 
       <div style={{ minHeight: '100vh', background: '#F8F8F5', padding: '2rem 1.5rem' }}>
         <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
@@ -329,7 +346,7 @@ const AdminPanel = () => {
                               color="#1D4ED8"
                               bg="#EFF6FF"
                               hoverBg="#DBEAFE"
-                              onClick={() => setPreview({ url: upload.fileUrl, title: upload.title })}
+                              onClick={() => setPreview({ url: upload.fileUrl, title: upload.title, uploadId: upload._id })}
                             />
                           )}
                           <ActionBtn
