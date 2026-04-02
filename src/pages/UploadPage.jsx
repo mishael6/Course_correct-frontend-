@@ -17,19 +17,31 @@ const UploadPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!file) {
+      setMessage({ type: 'error', text: 'Please select a PDF file' });
+      return;
+    }
+
     const data = new FormData();
     Object.keys(formData).forEach(key => data.append(key, formData[key]));
-    if (file) data.append('document', file);
+    data.append('document', file);
 
     try {
-      const res = await api.post('/uploads', data, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      // Don't set Content-Type header - let axios handle it automatically with FormData
+      const res = await api.post('/uploads', data);
       setMessage({ type: 'success', text: res.data.message });
       setFormData({ title: '', courseCode: '', institution: '', year: '', price: '' });
       setFile(null);
     } catch (err) {
-      setMessage({ type: 'error', text: err.response?.data?.message || 'Error uploading file. Please ensure you are logged in.' });
+      const errorMsg = err.response?.data?.message;
+      if (err.response?.status === 401) {
+        setMessage({ type: 'error', text: 'Your session has expired. Please log in again.' });
+      } else if (err.response?.status === 400) {
+        setMessage({ type: 'error', text: errorMsg || 'Invalid file or form data' });
+      } else {
+        setMessage({ type: 'error', text: errorMsg || 'Error uploading file. Please try again.' });
+      }
     }
   };
 
