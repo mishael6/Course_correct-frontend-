@@ -123,6 +123,19 @@ const AdminPanel = () => {
     }
   };
 
+  const handleViewPDF = async (uploadId, title) => {
+    try {
+      // Get the proper download URL from the API
+      const res = await api.get(`/admin/uploads/${uploadId}/download`);
+      const { fileUrl } = res.data;
+      // Open in new tab
+      window.open(fileUrl, '_blank');
+    } catch (err) {
+      console.error('Failed to get PDF URL:', err);
+      showToast('Failed to open PDF', 'error');
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -250,7 +263,7 @@ const AdminPanel = () => {
                               color="#1D4ED8"
                               bg="#EFF6FF"
                               hoverBg="#DBEAFE"
-                              onClick={() => window.open(upload.fileUrl, '_blank')}
+                              onClick={() => handleViewPDF(upload._id, upload.title)}
                             />
                           )}
                           <ActionBtn
