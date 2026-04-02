@@ -29,7 +29,7 @@ const StatCard = ({ label, value, accent, sub }) => (
   </div>
 );
 
-const TABS = ['Pending Uploads', 'Pending Withdrawals'];
+const TABS = ['Pending Uploads', 'Pending Withdrawals', 'File Recovery'];
 
 // ─── Action Button ────────────────────────────────────────────────────────────
 const ActionBtn = ({ label, color, bg, hoverBg, loading, onClick, style = {} }) => {
@@ -61,6 +61,7 @@ const AdminPanel = () => {
   const [uploads, setUploads] = useState([]);
   const [withdrawals, setWithdrawals] = useState([]);
   const [stats, setStats] = useState(null);
+  const [recoveryStatus, setRecoveryStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
   const [toast, setToast] = useState(null);
@@ -73,14 +74,16 @@ const AdminPanel = () => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [uploadsRes, withdrawalsRes, statsRes] = await Promise.all([
+      const [uploadsRes, withdrawalsRes, statsRes, recoveryRes] = await Promise.all([
         api.get('/admin/uploads/pending'),
         api.get('/admin/withdrawals/pending'),
         api.get('/admin/stats'),
+        api.get('/admin/recovery/status').catch(() => ({ data: null })),
       ]);
       setUploads(uploadsRes.data);
       setWithdrawals(withdrawalsRes.data);
       setStats(statsRes.data);
+      setRecoveryStatus(recoveryRes.data);
     } catch (err) {
       showToast('Failed to fetch data', 'error');
     } finally {
@@ -133,6 +136,32 @@ const AdminPanel = () => {
     } catch (err) {
       console.error('Failed to get PDF URL:', err);
       showToast('Failed to open PDF', 'error');
+    }
+  };
+
+  const handleRecoverFile = async (uploadId) => {
+    setActionLoading('recover-' + uploadId);
+    try {
+      await api.post(`/admin/recovery/${uploadId}`);
+      await fetchData();
+      showToast('File recovered successfully');
+    } catch (err) {
+      showToast('Recovery failed', 'error');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const handleRecoverAll = async () => {
+    setActionLoading('recover-all');
+    try {
+      await api.post('/admin/recovery-all/run');
+      await fetchData();
+      showToast('Batch recovery completed');
+    } catch (err) {
+      showToast('Batch recovery failed', 'error');
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -203,6 +232,11 @@ const AdminPanel = () => {
                 {i === 1 && withdrawals.length > 0 && (
                   <span style={{ marginLeft: '6px', background: '#7C3AED', color: '#fff', borderRadius: '999px', padding: '1px 7px', fontSize: '0.7rem' }}>
                     {withdrawals.length}
+                  </span>
+                )}
+                {i === 2 && recoveryStatus?.filesRecoverable > 0 && (
+                  <span style={{ marginLeft: '6px', background: '#F59E0B', color: '#fff', borderRadius: '999px', padding: '1px 7px', fontSize: '0.7rem' }}>
+                    {recoveryStatus.filesRecoverable}
                   </span>
                 )}
               </button>
@@ -282,6 +316,105 @@ const AdminPanel = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+              )}
+
+              {/* ── File Recovery ── */}
+              {activeTab === 2 && recoveryStatus && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  {/* Recovery Stats */}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1rem' }}>
+                    <StatCard label="Total Approved" value={recoveryStatus.totalApproved} accent="#111" />
+                    <StatCard label="Files Existing" value={recoveryStatus.filesExisting} accent="#16A34A" />
+                    <StatCard label="Can Recover" value={recoveryStatus.filesRecoverable} accent="#F59E0B" />
+                  </div>
+
+                  {/* Batch Recovery Button */}
+                  {recoveryStatus.filesRecoverable > 0 && (
+                    <div style={{
+                      background: '#FEF3C7', border: '1px solid #FCD34D',
+                      borderRadius: '12px', padding: '1.25rem',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      flexWrap: 'wrap', gap: '1rem'
+                    }}>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#78350F', fontSize: '0.95rem' }}>
+                          🔄 {recoveryStatus.filesRecoverable} file(s) missing
+                        </div>
+                        <div style={{ color: '#92400E', fontSize: '0.85rem', marginTop: '0.25rem' }}>
+                          Click below to restore all from Cloudinary backup
+                        </div>
+                      </div>
+                      <ActionBtn
+                        label="Recover All"
+                        color="#92400E"
+                        bg="#FCD34D"
+                        hoverBg="#FBB040"
+                        loading={actionLoading === 'recover-all'}
+                        onClick={handleRecoverAll}
+                      />
+                    </div>
+                  )}
+
+                  {/* Recovery Details */}
+                  {recoveryStatus.uploads.length === 0 ? (
+                    <EmptyState message="No approved uploads to monitor." />
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                      {recoveryStatus.uploads.map(file => (
+                        <div key={file.id} style={{
+                          background: '#fff', border: '1px solid #E8E8E4',
+                          borderRadius: '10px', padding: '1rem 1.25rem',
+                          display: 'flex', alignItems: 'center', gap: '1rem',
+                          flexWrap: 'wrap'
+                        }}>
+                          {/* Icon */}
+                          <div style={{
+                            width: '36px', height: '36px', borderRadius: '8px',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            flexShrink: 0, fontSize: '1rem',
+                            background: file.fileExists ? '#DCFCE7' : '#FEE2E2'
+                          }}>
+                            {file.fileExists ? '✅' : '⚠️'}
+                          </div>
+
+                          {/* Info */}
+                          <div style={{ flex: 1, minWidth: '200px' }}>
+                            <div style={{ fontWeight: 700, color: '#111', fontSize: '0.9rem' }}>
+                              {file.title}
+                            </div>
+                            <div style={{ fontSize: '0.75rem', color: '#9A9A9A', marginTop: '2px' }}>
+                              {file.fileExists ? '📁 On disk' : '☁️ Missing locally'}
+                              {file.hasBackup && ' · 🔒 Backed up'}
+                            </div>
+                          </div>
+
+                          {/* Status Badge */}
+                          <div style={{{
+                            padding: '4px 10px', borderRadius: '999px', fontSize: '0.7rem',
+                            fontWeight: 600, textTransform: 'uppercase',
+                            background: file.fileExists ? '#DCFCE7' : '#FEE2E2',
+                            color: file.fileExists ? '#14532D' : '#7F1D1D',
+                            border: `1px solid ${file.fileExists ? '#BBF7D0' : '#FECACA'}`
+                          }}>
+                            {file.fileExists ? 'Safe' : file.hasBackup ? 'Recoverable' : 'Lost'}
+                          </div>
+
+                          {/* Action */}
+                          {file.canRecover && (
+                            <ActionBtn
+                              label="Recover"
+                              color="#F59E0B"
+                              bg="#FEF3C7"
+                              hoverBg="#FCD34D"
+                              loading={actionLoading === 'recover-' + file.id}
+                              onClick={() => handleRecoverFile(file.id)}
+                            />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 
