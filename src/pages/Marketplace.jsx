@@ -340,9 +340,28 @@ const Marketplace = () => {
           gap: 1.25rem;
         }
 
+        @media (max-width: 1200px) {
+          .docs-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+        }
+
+        @media (max-width: 768px) {
+          .mp-root { padding: 1rem; }
+          .mp-content-wrapper { gap: 1rem; }
+          .filter-bar { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+          .docs-grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+          .mp-doc-card { padding: 1rem; }
+          .mp-doc-title { font-size: 1.1rem; }
+          .mp-doc-desc { font-size: 0.85rem; }
+        }
+
         @media (max-width: 600px) {
+          .mp-root { padding: 0.75rem; }
           .filter-bar { grid-template-columns: 1fr; }
           .docs-grid { grid-template-columns: 1fr; }
+          .mp-doc-card { padding: 0.75rem; }
+          .mp-doc-title { font-size: 1rem; }
+          .mp-doc-desc { font-size: 0.8rem; }
+          .mp-search-btn { padding: 0.5rem 1rem; font-size: 0.85rem; }
         }
       `}</style>
 

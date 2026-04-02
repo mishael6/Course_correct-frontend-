@@ -228,6 +228,25 @@ const Dashboard = () => {
           from { opacity: 0; transform: translateY(12px); }
           to { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Mobile: < 640px */
+        @media (max-width: 639px) {
+          .dash-root { padding: 1rem 0.75rem 4rem; }
+          .dash-root h1 { font-size: 1.8rem !important; }
+          .dash-tab-btn { padding: 0.5rem 0.8rem; font-size: 0.75rem; }
+          .dash-tab-btn span { margin-left: 4px; padding: 1px 4px; font-size: 0.6rem; }
+          div[style*="display: grid"][style*="minmax(200px"] { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+          .sub-btn { width: 100%; padding: 0.65rem 0.9rem; font-size: 0.8rem; }
+          .withdraw-input { padding: 0.65rem 0.85rem; font-size: 0.9rem; }
+          div[style*="gap: '0.75rem'"i] { gap: 0.5rem !important; }
+        }
+        
+        /* Tablet: 640px - 1023px */
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .dash-root { padding: 1.5rem 1rem 4rem; }
+          .dash-root h1 { font-size: 2rem !important; }
+          div[style*="display: grid"][style*="minmax(200px"] { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+        }
       `}</style>
 
       <div className="dash-root">

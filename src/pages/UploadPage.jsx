@@ -47,6 +47,14 @@ const UploadPage = () => {
 
   return (
     <div className="page form-container" style={{ maxWidth: '500px' }}>
+      <style>{`
+        /* Mobile: < 640px */
+        @media (max-width: 639px) {
+          .upload-row { flex-direction: column !important; gap: 0.75rem !important; }
+          .upload-row input { flex: 1 !important; }
+        }
+      `}</style>
+      
       <h2>Upload Document</h2>
       {message && <p style={{ color: message.type === 'error' ? 'red' : 'green', margin: 0, fontWeight: 'bold' }}>{message.text}</p>}
       
@@ -55,7 +63,7 @@ const UploadPage = () => {
         <input type="text" name="courseCode" placeholder="Course Code (e.g., CS101)" value={formData.courseCode} onChange={handleChange} required />
         <input type="text" name="institution" placeholder="Institution" value={formData.institution} onChange={handleChange} required />
         
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="upload-row" style={{ display: 'flex', gap: '1rem' }}>
           <input type="number" name="year" placeholder="Year" value={formData.year} onChange={handleChange} required style={{ flex: 1 }} />
           <input type="number" name="price" placeholder="Price ($)" value={formData.price} onChange={handleChange} required style={{ flex: 1 }} />
         </div>

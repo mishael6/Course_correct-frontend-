@@ -169,6 +169,27 @@ const AdminPanel = () => {
     <>
       <style>{`
         @keyframes fadeIn { from { opacity:0 } to { opacity:1 } }
+        
+        /* Mobile: < 640px */
+        @media (max-width: 639px) {
+          .admin-root { padding: 1rem 0.75rem !important; }
+          .admin-stats { grid-template-columns: 1fr !important; gap: 0.75rem !important; }
+          .admin-header h1 { font-size: 1.4rem !important; }
+          .admin-header p { font-size: 0.8rem !important; }
+          .admin-tabs { flex-wrap: wrap !important; }
+          .admin-tab { padding: 0.5rem 0.9rem !important; font-size: 0.75rem !important; }
+          .upload-card { flex-direction: column; align-items: flex-start !important; padding: 0.9rem 1rem !important; }
+          .upload-icon { width: 36px !important; height: 36px !important; }
+          .upload-actions { width: 100%; flex-direction: column !important; }
+          .action-btn { width: 100%; padding: 0.6rem 0.8rem !important; font-size: 0.75rem !important; }
+        }
+        
+        /* Tablet: 640px - 1023px */
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .admin-root { padding: 1.5rem 1rem !important; }
+          .admin-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 1rem !important; }
+          .admin-header h1 { font-size: 1.6rem !important; }
+        }
       `}</style>
 
       {/* Toast */}

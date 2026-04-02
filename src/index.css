@@ -392,16 +392,38 @@ input::placeholder, textarea::placeholder { color: var(--text-light); }
 
 .auth-link a:hover { text-decoration: underline; }
 
-/* ── Badges / Pills ───────────────────────────────────────────────────────── */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+/* ── Responsive Design ───────────────────────────────────────────────────── */
+
+/* Mobile: < 640px */
+@media (max-width: 639px) {
+  .navbar { padding: 0.75rem 1rem; }
+  .navbar-logo { font-size: 1.2rem; }
+  .navbar-menu { gap: 0.5rem; }
+  .btn { padding: 0.55rem 1rem; font-size: 0.85rem; }
+  .main-content { padding: 1.5rem 1rem; }
+  .form-container { margin: 1.5rem auto; padding: 1.75rem; }
+  .form-container h2 { font-size: 1.5rem; }
+  .form-container input, input[type="text"], input[type="email"], input[type="password"], input[type="number"], select, textarea { padding: 0.65rem 0.9rem; font-size: 0.9rem; }
+  .auth-container { padding: 1rem; }
+  .auth-card { padding: 1.75rem; }
+  .auth-card h2 { font-size: 1.6rem; }
+  .hero { padding: 3rem 1rem; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); }
+}
+
+/* Tablet: 640px - 1023px */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .navbar { padding: 0.85rem 1.5rem; }
+  .main-content { padding: 2rem 1.5rem; }
+  .form-container { margin: 2rem auto; }
+  .hero { padding: 4rem 1.5rem; }
+}
+
+/* Small phones: < 360px */
+@media (max-width: 359px) {
+  .form-container { padding: 1.5rem; margin: 1rem auto; }
+  .form-container h2 { font-size: 1.4rem; }
+  .btn { padding: 0.5rem 0.9rem; font-size: 0.8rem; }
 }
 
 .badge-pending  { background: #FEF9C3; color: #854D0E; border: 1px solid #FDE68A; }

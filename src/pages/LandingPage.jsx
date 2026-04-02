@@ -314,6 +314,45 @@ const LandingPage = () => {
 
         @media (max-width: 700px) {
           .earn-grid { grid-template-columns: 1fr; }
+          .hero { padding: 2rem 1.5rem 1.5rem; }
+          .hero-blob { display: none; }
+          .hero h1 { font-size: clamp(2rem, 6vw, 3rem); }
+          .hero-sub { font-size: 1rem; margin-bottom: 2rem; }
+          .hero-ctas { flex-wrap: wrap; justify-content: center; }
+          .btn-primary, .btn-ghost { padding: 0.75rem 1.5rem; font-size: 0.85rem; }
+          .section { padding: 3rem 1.5rem; }
+          .section-title { font-size: clamp(1.5rem, 5vw, 2.5rem); margin-bottom: 2rem; }
+          .steps-grid { grid-template-columns: 1fr; }
+          .step-card { padding: 1.75rem 1.5rem; }
+          .step-icon { font-size: 1.5rem; }
+          .step-title { font-size: 1rem; }
+          .stats-row { grid-template-columns: 1fr; }
+          .stat-num { font-size: 2rem; }
+          .stat-block { padding: 1.75rem 1.5rem; }
+          .ticker-track { gap: 1.5rem; }
+          .ticker-item { font-size: 0.65rem; }
+          .earn-left { padding-right: 0; margin-bottom: 1.5rem; }
+        }
+        
+        /* Tablet: 640px - 1023px */
+        @media (min-width: 640px) and (max-width: 1023px) {
+          .hero { padding: 3rem 2rem 2rem; }
+          .hero-blob { width: 250px; height: 250px; }
+          .hero h1 { font-size: clamp(2.5rem, 6vw, 3.5rem); }
+          .section { padding: 4rem 2rem; }
+          .section-title { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 2.5rem; }
+          .steps-grid { grid-template-columns: repeat(2, 1fr); }
+          .step-card { padding: 2rem; }
+          .stats-row { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        /* Small phones: < 360px */
+        @media (max-width: 359px) {
+          .hero h1 { font-size: 1.75rem; }
+          .hero-sub { font-size: 0.9rem; margin-bottom: 1.5rem; }
+          .btn-primary, .btn-ghost { padding: 0.65rem 1.25rem; font-size: 0.8rem; }
+          .section { padding: 2rem 1rem; }
+          .step-card { padding: 1.5rem 1rem; }
         }
 
         .earn-left {
