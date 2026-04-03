@@ -328,17 +328,13 @@ const AdminPanel = () => {
                             color="#1D4ED8"
                             bg="#EFF6FF"
                             hoverBg="#DBEAFE"
-                            loading={actionLoading === upload._id + 'preview'}
-                            onClick={async () => {
-                              setActionLoading(upload._id + 'preview');
-                              try {
-                                const res = await api.get(`/uploads/${upload._id}/preview`);
-                                setPreview({ url: res.data.fileUrl, title: res.data.title });
-                              } catch {
-                                showToast('Could not load preview', 'error');
-                              } finally {
-                                setActionLoading(null);
-                              }
+                            onClick={() => {
+                              const token = localStorage.getItem('token');
+                              const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+                              setPreview({
+                                url: `${baseUrl}/uploads/${upload._id}/preview?token=${token}`,
+                                title: upload.title
+                              });
                             }}
                           />
                           <ActionBtn
