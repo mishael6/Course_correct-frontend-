@@ -13,7 +13,7 @@ const StarRating = ({ rating = 0 }) => (
   </span>
 );
 
-const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin }) => {
+const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, isPurchased, buying, isAdmin }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <div
@@ -106,6 +106,21 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin 
           >
             {buying === upload._id ? 'Opening...' : '↓ Download (Subscribed)'}
           </button>
+        ) : isPurchased ? (
+          <button
+            onClick={() => onBuy(upload._id, 'download')}
+            disabled={buying === upload._id}
+            style={{
+              padding: '0.7rem', borderRadius: '9px', border: 'none',
+              background: '#EAB308', color: '#09090B',
+              fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.85rem',
+              cursor: buying === upload._id ? 'not-allowed' : 'pointer',
+              opacity: buying === upload._id ? 0.6 : 1,
+              transition: 'opacity 0.2s'
+            }}
+          >
+            {buying === upload._id ? 'Opening...' : '↓ Download (Purchased)'}
+          </button>
         ) : (
           <>
             <button
@@ -153,6 +168,7 @@ const Marketplace = () => {
   const [buying, setBuying] = useState(null);
   const [modal, setModal] = useState(null); // { uploadId, title, price }
   const [hasSubscription, setHasSubscription] = useState(false);
+  const [purchasedIds, setPurchasedIds] = useState([]);
   const [toast, setToast] = useState(null);
 
   // Filters
@@ -201,8 +217,17 @@ const Marketplace = () => {
     } catch {}
   }, [user]);
 
+  const fetchPurchases = useCallback(async () => {
+    if (!user) return;
+    try {
+      const res = await api.get('/payments/purchased-uploads');
+      setPurchasedIds(res.data);
+    } catch {}
+  }, [user]);
+
   useEffect(() => { fetchUploads(); }, [fetchUploads]);
   useEffect(() => { fetchSubscription(); }, [fetchSubscription]);
+  useEffect(() => { fetchPurchases(); }, [fetchPurchases]);
 
   // ── Buy / Download ──────────────────────────────────────────────────────────
   const handleBuy = async (uploadId, mode) => {
@@ -501,6 +526,7 @@ const Marketplace = () => {
                   onBuy={handleBuy}
                   onSubscribe={handleSubscribe}
                   hasSubscription={hasSubscription}
+                  isPurchased={purchasedIds.includes(upload._id)}
                   buying={buying}
                   isAdmin={user?.role === 'admin'}
                 />
