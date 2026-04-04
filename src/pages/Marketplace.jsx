@@ -149,7 +149,7 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, isPurchased, buy
               onMouseEnter={e => { e.target.style.borderColor = '#52525B'; e.target.style.color = '#A1A1AA'; }}
               onMouseLeave={e => { e.target.style.borderColor = '#27272A'; e.target.style.color = '#71717A'; }}
             >
-              ✦ Subscribe GHS 15/mo — Unlimited Access
+              ✦ Subscribe GHS {subscriptionPrice}/mo — Unlimited Access
             </button>
           </>
         )}
@@ -169,6 +169,7 @@ const Marketplace = () => {
   const [modal, setModal] = useState(null); // { uploadId, title, price }
   const [hasSubscription, setHasSubscription] = useState(false);
   const [purchasedIds, setPurchasedIds] = useState([]);
+  const [subscriptionPrice, setSubscriptionPrice] = useState(15);
   const [toast, setToast] = useState(null);
 
   // Filters
@@ -225,9 +226,17 @@ const Marketplace = () => {
     } catch {}
   }, [user]);
 
+  const fetchSettings = useCallback(async () => {
+    try {
+      const res = await api.get('/settings');
+      if (res.data?.subscriptionPrice) setSubscriptionPrice(res.data.subscriptionPrice);
+    } catch {}
+  }, []);
+
   useEffect(() => { fetchUploads(); }, [fetchUploads]);
   useEffect(() => { fetchSubscription(); }, [fetchSubscription]);
   useEffect(() => { fetchPurchases(); }, [fetchPurchases]);
+  useEffect(() => { fetchSettings(); }, [fetchSettings]);
 
   // ── Buy / Download ──────────────────────────────────────────────────────────
   const handleBuy = async (uploadId, mode) => {
@@ -265,7 +274,7 @@ const Marketplace = () => {
   // ── Subscribe — open MoMo modal ─────────────────────────────────────────────
   const handleSubscribe = () => {
     if (!user) return navigate('/login');
-    setModal({ mode: 'subscription', title: 'Monthly Subscription', price: 15 });
+    setModal({ mode: 'subscription', title: 'Monthly Subscription', price: subscriptionPrice });
   };
 
   const handleSearch = (e) => {
@@ -413,7 +422,7 @@ const Marketplace = () => {
               gap: '1rem'
             }}>
               <div>
-                <div style={{ fontWeight: 700, color: '#EAB308', fontSize: '0.92rem' }}>✦ Unlock everything for GHS 15/month</div>
+                <div style={{ fontWeight: 700, color: '#EAB308', fontSize: '0.92rem' }}>✦ Unlock everything for GHS {subscriptionPrice}/month</div>
                 <div style={{ color: '#713F12', fontSize: '0.8rem', marginTop: '2px' }}>Download any document, unlimited times.</div>
               </div>
               <button
