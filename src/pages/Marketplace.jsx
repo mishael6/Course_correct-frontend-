@@ -237,16 +237,10 @@ const Marketplace = () => {
     }
   };
 
-  // ── Subscribe ───────────────────────────────────────────────────────────────
-  const handleSubscribe = async () => {
+  // ── Subscribe — open MoMo modal ─────────────────────────────────────────────
+  const handleSubscribe = () => {
     if (!user) return navigate('/login');
-    try {
-      const res = await api.post('/subscription');
-      showToast(res.data.message);
-      fetchSubscription();
-    } catch (err) {
-      showToast(err.response?.data?.message || 'Failed to subscribe', 'error');
-    }
+    setModal({ mode: 'subscription', title: 'Monthly Subscription', price: 15 });
   };
 
   const handleSearch = (e) => {
@@ -516,7 +510,7 @@ const Marketplace = () => {
         </div>
       </div>
 
-      {/* Per-paper payment modal */}
+      {/* Payment modal — handles both per-paper and subscription */}
       {modal && (
         <MoMoModal
           isOpen={!!modal}
@@ -524,12 +518,16 @@ const Marketplace = () => {
           onSuccess={() => {
             setModal(null);
             setBuying(null);
-            showToast('Payment successful! Go to your dashboard to download.');
             fetchSubscription();
+            showToast(
+              modal.mode === 'subscription'
+                ? 'Subscription activated! You now have unlimited access.'
+                : 'Payment successful! Go to your dashboard to download.'
+            );
           }}
           title={modal.title}
           amount={modal.price}
-          mode="per-paper"
+          mode={modal.mode || 'per-paper'}
           uploadId={modal.uploadId}
         />
       )}
