@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import MoMoModal from '../components/MoMoModal';
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 const StarRating = ({ rating = 0 }) => (
@@ -150,6 +151,7 @@ const Marketplace = () => {
   const [uploads, setUploads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [buying, setBuying] = useState(null);
+  const [modal, setModal] = useState(null); // { uploadId, title, price }
   const [hasSubscription, setHasSubscription] = useState(false);
   const [toast, setToast] = useState(null);
 
@@ -214,8 +216,14 @@ const Marketplace = () => {
         window.open(`${baseUrl}/uploads/${uploadId}/download?token=${token}`, '_blank');
         showToast('Download started!');
       } else {
-        const res = await api.post('/payments/initiate', { uploadId });
-        showToast(res.data.message);
+        // Find upload details for modal
+        const upload = uploads.find(u => u._id === uploadId);
+        setModal({
+          uploadId,
+          title: upload?.title || 'Document',
+          price: upload?.price || 0
+        });
+        setBuying(null); // clear so button doesn't stay disabled
       }
     } catch (err) {
       const msg = err.response?.data?.message || 'Something went wrong';
@@ -507,6 +515,24 @@ const Marketplace = () => {
           )}
         </div>
       </div>
+
+      {/* Per-paper payment modal */}
+      {modal && (
+        <MoMoModal
+          isOpen={!!modal}
+          onClose={() => { setModal(null); setBuying(null); }}
+          onSuccess={() => {
+            setModal(null);
+            setBuying(null);
+            showToast('Payment successful! Go to your dashboard to download.');
+            fetchSubscription();
+          }}
+          title={modal.title}
+          amount={modal.price}
+          mode="per-paper"
+          uploadId={modal.uploadId}
+        />
+      )}
     </>
   );
 };
