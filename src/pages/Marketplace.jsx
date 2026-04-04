@@ -12,7 +12,7 @@ const StarRating = ({ rating = 0 }) => (
   </span>
 );
 
-const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying }) => {
+const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying, isAdmin }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <div
@@ -73,7 +73,24 @@ const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, buying }) => {
 
       {/* Actions */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        {hasSubscription ? (
+        {isAdmin ? (
+          // Admin gets free download — no payment needed
+          <button
+            onClick={() => onBuy(upload._id, 'download')}
+            disabled={buying === upload._id}
+            style={{
+              padding: '0.7rem', borderRadius: '9px', border: 'none',
+              background: '#18181B', color: '#EAB308',
+              border: '1px solid #EAB308',
+              fontFamily: "'Outfit', sans-serif", fontWeight: 700, fontSize: '0.85rem',
+              cursor: buying === upload._id ? 'not-allowed' : 'pointer',
+              opacity: buying === upload._id ? 0.6 : 1,
+              transition: 'opacity 0.2s'
+            }}
+          >
+            {buying === upload._id ? 'Opening...' : '↓ Admin Download'}
+          </button>
+        ) : hasSubscription ? (
           <button
             onClick={() => onBuy(upload._id, 'download')}
             disabled={buying === upload._id}
@@ -483,6 +500,7 @@ const Marketplace = () => {
                   onSubscribe={handleSubscribe}
                   hasSubscription={hasSubscription}
                   buying={buying}
+                  isAdmin={user?.role === 'admin'}
                 />
               ))}
             </div>
