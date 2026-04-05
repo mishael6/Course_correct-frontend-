@@ -84,6 +84,7 @@ const Dashboard = () => {
   const [subscription, setSubscription] = useState(null);
   const [uploads, setUploads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [subscriptionPrice, setSubscriptionPrice] = useState(15);
   const [toast, setToast] = useState(null);
 
   // Withdrawal form
@@ -101,14 +102,16 @@ const Dashboard = () => {
   const fetchAll = useCallback(async () => {
     setLoading(true);
     try {
-      const [walletRes, subRes, uploadsRes] = await Promise.all([
+      const [walletRes, subRes, uploadsRes, settingsRes] = await Promise.all([
         api.get('/wallet'),
         api.get('/subscription'),
         api.get('/uploads/mine').catch(() => ({ data: [] })), // graceful if route doesn't exist yet
+        api.get('/settings').catch(() => ({ data: {} }))
       ]);
       setWallet(walletRes.data);
       setSubscription(subRes.data);
       setUploads(uploadsRes.data);
+      if (settingsRes.data?.subscriptionPrice) setSubscriptionPrice(settingsRes.data.subscriptionPrice);
     } catch (err) {
       console.error(err);
     } finally {
@@ -332,7 +335,7 @@ const Dashboard = () => {
 
                       {!hasActiveSub ? (
                         <button className="sub-btn" onClick={handleSubscribe} style={{ background: '#F9FAFB', color: '#0D0D0F' }}>
-                          ✦ Subscribe — GHS 15/mo
+                          ✦ Subscribe — GHS {subscriptionPrice}/mo
                         </button>
                       ) : (
                         <button
@@ -568,7 +571,7 @@ const Dashboard = () => {
         onClose={() => setMomoOpen(false)}
         onSuccess={() => { fetchAll(); showToast('Subscription activated!'); }}
         title="Monthly Subscription"
-        amount={15}
+        amount={subscriptionPrice}
         mode="subscription"
       />
     </>
