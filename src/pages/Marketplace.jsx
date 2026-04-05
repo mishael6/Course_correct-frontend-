@@ -13,7 +13,7 @@ const StarRating = ({ rating = 0 }) => (
   </span>
 );
 
-const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, isPurchased, buying, isAdmin }) => {
+const DocCard = ({ upload, onBuy, onSubscribe, hasSubscription, isPurchased, buying, isAdmin, subscriptionPrice }) => {
   const [hovered, setHovered] = useState(false);
   return (
     <div
@@ -538,6 +538,7 @@ const Marketplace = () => {
                   isPurchased={purchasedIds.includes(upload._id)}
                   buying={buying}
                   isAdmin={user?.role === 'admin'}
+                  subscriptionPrice={subscriptionPrice}
                 />
               ))}
             </div>
