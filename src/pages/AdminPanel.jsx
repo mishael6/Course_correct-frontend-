@@ -193,12 +193,23 @@ const AdminPanel = () => {
   };
 
   const handleApproveWithdrawal = async (id) => {
-    setActionLoading(id);
+    setActionLoading(id + 'approve');
     try {
       await api.put(`/admin/withdrawals/${id}/approve`);
       setWithdrawals(prev => prev.filter(w => w._id !== id));
       setStats(prev => prev ? { ...prev, pendingWithdrawals: prev.pendingWithdrawals - 1 } : prev);
       showToast('Withdrawal approved');
+    } catch { showToast('Action failed', 'error'); }
+    finally { setActionLoading(null); }
+  };
+
+  const handleRejectWithdrawal = async (id) => {
+    setActionLoading(id + 'reject');
+    try {
+      await api.put(`/admin/withdrawals/${id}/reject`);
+      setWithdrawals(prev => prev.filter(w => w._id !== id));
+      setStats(prev => prev ? { ...prev, pendingWithdrawals: prev.pendingWithdrawals - 1 } : prev);
+      showToast('Withdrawal rejected');
     } catch { showToast('Action failed', 'error'); }
     finally { setActionLoading(null); }
   };
@@ -340,7 +351,10 @@ const AdminPanel = () => {
                           <div style={{ fontWeight: 800, color: C.text, fontSize: '1.1rem', fontFamily: 'monospace' }}>GHS {w.amount?.toFixed(2)}</div>
                           <Badge status={w.status} />
                         </div>
-                        <ActionBtn label="Approve Payout" color={C.greenText} bg={C.greenBg} hoverBg="#BBF7D0" loading={actionLoading === w._id} onClick={() => handleApproveWithdrawal(w._id)} />
+                        <div style={{ display: 'flex', gap: '0.5rem' }}>
+                          <ActionBtn label="Approve" color={C.greenText} bg={C.greenBg} hoverBg="#BBF7D0" loading={actionLoading === w._id + 'approve'} onClick={() => handleApproveWithdrawal(w._id)} />
+                          <ActionBtn label="Reject" color={C.redText} bg={C.redBg} hoverBg="#FECACA" loading={actionLoading === w._id + 'reject'} onClick={() => handleRejectWithdrawal(w._id)} />
+                        </div>
                       </div>
                     ))
                   }
