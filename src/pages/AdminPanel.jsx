@@ -390,6 +390,16 @@ const AdminPanel = () => {
                             <div style={{ fontSize: '0.68rem', color: C.light, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Joined</div>
                             <div style={{ fontSize: '0.8rem', color: C.muted }}>{new Date(u.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
                           </div>
+                          <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.68rem', color: C.light, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sub</div>
+                            {u.subscription && new Date(u.subscription.expiresAt) > new Date() ? (
+                              <div style={{ fontSize: '0.8rem', color: C.purple, fontWeight: 700 }}>
+                                Active ({Math.ceil((new Date(u.subscription.expiresAt) - new Date()) / (1000 * 60 * 60 * 24))}d)
+                              </div>
+                            ) : (
+                              <div style={{ fontSize: '0.8rem', color: C.muted }}>None</div>
+                            )}
+                          </div>
                         </div>
                         <Badge status={u.role} />
                       </div>
