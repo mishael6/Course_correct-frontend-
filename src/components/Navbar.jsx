@@ -20,9 +20,9 @@ const Navbar = () => {
 
   return (
     <nav className="navbar">
-      <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }} onClick={closeMobileMenu}>
-        <img src={logo} alt="Course Correct" style={{ height: '30px', width: 'auto' }} />
-        Course Correct
+      <Link to="/" className="logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }} onClick={closeMobileMenu}>
+        <img src={logo} alt="Course Correct" style={{ height: '46px', width: 'auto', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.08))' }} />
+        <span style={{ fontSize: '1.45rem', letterSpacing: '-0.03em' }}>Course Correct</span>
       </Link>
 
       {/* Hamburger Button */}
