@@ -297,6 +297,7 @@ const AdminPanel = () => {
                     <StatCard label="Rejected" value={stats?.rejectedUploads ?? '—'} accent={C.red} icon="❌" />
                     <StatCard label="Students" value={stats?.totalStudents ?? '—'} accent={C.blue} icon="🎓" />
                     <StatCard label="Withdrawals" value={stats?.pendingWithdrawals ?? '—'} accent={C.purple} icon="💸" sub="Pending" />
+                    <StatCard label="Downloads" value={stats?.totalDownloads ?? '—'} accent={C.text} icon="⬇️" sub="Global" />
                   </div>
 
                   {/* Quick pending uploads */}
@@ -389,6 +390,10 @@ const AdminPanel = () => {
                           <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '0.68rem', color: C.light, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Joined</div>
                             <div style={{ fontSize: '0.8rem', color: C.muted }}>{new Date(u.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short' })}</div>
+                          </div>
+                          <div style={{ textAlign: 'center' }}>
+                            <div style={{ fontSize: '0.68rem', color: C.light, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Dwnlds</div>
+                            <div style={{ fontFamily: 'monospace', fontWeight: 700, color: C.blueText }}>{u.downloadsMade || 0}</div>
                           </div>
                           <div style={{ textAlign: 'center' }}>
                             <div style={{ fontSize: '0.68rem', color: C.light, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em' }}>Sub</div>
