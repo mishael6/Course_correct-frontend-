@@ -186,7 +186,7 @@ body {
 
 .btn-secondary {
   background-color: transparent !important;
-  color: var(--text-main) !important;
+  color: white !important;
   border: 1.5px solid var(--border) !important;
   box-shadow: none !important;
 }
