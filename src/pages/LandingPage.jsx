@@ -228,7 +228,7 @@ const LandingPage = () => {
         }
 
         .step-card {
-          background: var(--secondary);
+          background: var(--bg-alt);
           padding: 2.5rem 2rem;
           transition: background 0.25s;
         }
