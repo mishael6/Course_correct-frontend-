@@ -140,7 +140,7 @@ const LandingPage = () => {
 
         .btn-ghost {
           padding: 0.9rem 2rem;
-          background: var(--primary-hover);
+          background: var(--secondary);
           color: var(--primary);
           border: 1px solid var(--primary);
           border-radius: 10px;
