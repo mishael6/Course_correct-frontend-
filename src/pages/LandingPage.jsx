@@ -180,7 +180,7 @@ const LandingPage = () => {
           font-family: 'DM Mono', monospace;
           font-size: 0.75rem;
           letter-spacing: 0.1em;
-          color: var(--text-main);
+          color: white;
           text-transform: uppercase;
           flex-shrink: 0;
         }
