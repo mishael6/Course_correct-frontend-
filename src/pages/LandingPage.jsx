@@ -454,7 +454,7 @@ const LandingPage = () => {
           <div className="ticker-track">
             {Array(2).fill([
               '📄 Past Questions',
-              '💰 Earn 80% Per Sale',
+              '💰 Earn 95% Per Sale',
               '🎓 All Institutions',
               '📱 Mobile Money Payouts',
               '🔒 Secure Downloads',
@@ -481,7 +481,7 @@ const LandingPage = () => {
             {[
               { n: '01', icon: '📤', title: 'Upload', desc: 'Submit your past question papers. Our admin team reviews and approves each document to keep quality high.' },
               { n: '02', icon: '🛒', title: 'Students Buy', desc: 'Other students find your document via the download section and purchase per-paper or with a monthly subscription.' },
-              { n: '03', icon: '💸', title: 'You Earn', desc: 'You pocket 80% of every sale. Request a payout anytime and receive funds directly to your Mobile Money.' },
+              { n: '03', icon: '💸', title: 'You Earn', desc: 'You pocket 95% of every sale. Request a payout anytime and receive funds directly to your Mobile Money.' },
             ].map(s => (
               <div key={s.n} className="step-card">
                 <div className="step-number">STEP {s.n}</div>
@@ -495,9 +495,9 @@ const LandingPage = () => {
           {/* Stats */}
           <div className="stats-row">
             {[
-              { num: '80%', desc: 'You keep per sale' },
-              { num: 'GHS 15', desc: 'Monthly subscription' },
-              { num: '24hr', desc: 'Payout processing' },
+              { num: '95%', desc: 'You keep per sale' },
+              { num: 'GHS 35', desc: 'Monthly subscription' },
+              { num: '2hrs', desc: 'Payout processing' },
               { num: '∞', desc: 'Courses & institutions' },
             ].map(s => (
               <div key={s.num} className="stat-block">
@@ -521,10 +521,10 @@ const LandingPage = () => {
           <div className="earn-grid">
             <div className="earn-left">
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: '0.95rem', marginBottom: '1.5rem' }}>
-                Set your own price for every document you upload. Every time a student purchases it, 80% goes straight to your wallet.
+                Set your own price for every document you upload. Every time a student purchases it, 95% goes straight to your wallet.
               </p>
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: '0.95rem' }}>
-                Request a payout whenever your balance is ready. Admin approves and sends it to your MoMo number within 24 hours.
+                Request a payout whenever your balance is ready. Admin approves and sends it to your MoMo number within 2 hours.
               </p>
             </div>
 
@@ -534,20 +534,20 @@ const LandingPage = () => {
                 <span className="val">GHS 10.00</span>
               </div>
               <div className="earn-row">
-                <span>Platform fee (20%)</span>
-                <span style={{ color: 'var(--primary)' }}>− GHS 2.00</span>
+                <span>Platform fee (5%)</span>
+                <span style={{ color: 'black' }}>− GHS 0.50</span>
               </div>
               <div className="earn-row">
                 <span>Your earnings</span>
-                <span className="green">GHS 8.00</span>
+                <span className="green" style={{ color: 'black' }}>GHS 9.50</span>
               </div>
               <div className="earn-row" style={{ marginTop: '0.5rem', paddingTop: '1rem', borderTop: '1px solid var(--primary)' }}>
                 <span>10 sales/month</span>
-                <span className="yellow">GHS 80.00</span>
+                <span className="yellow">GHS 95.00</span>
               </div>
               <div className="earn-row">
                 <span>50 sales/month</span>
-                <span className="yellow">GHS 400.00</span>
+                <span className="yellow">GHS 475.00</span>
               </div>
             </div>
           </div>
