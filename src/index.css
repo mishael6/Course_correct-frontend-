@@ -81,6 +81,12 @@ body {
   align-items: center;
 }
 
+a {
+  text-decoration: none !important;
+  color: #9CA3AF !important;
+  transition: color 0.15s, background 0.15s;
+}
+
 .navbar a {
   text-decoration: none;
   color: #9CA3AF;
