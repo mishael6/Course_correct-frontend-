@@ -446,11 +446,11 @@ const LandingPage = () => {
             <Link to={user ? '/upload' : '/login'} className="btn-ghost">
               Start Uploading
             </Link>
-            <br />
-            <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: '0.95rem' }}>
-              A PRODUCT OF <a href="https://class-iq.netlify.app" target="_blank" rel="noopener noreferrer">ClassIQ (Smart way of marking attendance)</a>
-            </p>
           </div>
+          <br />
+          <p style={{ color: 'var(--text-muted)', lineHeight: 1.8, fontSize: '0.95rem' }}>
+            A PRODUCT OF <a href="https://class-iq.netlify.app" target="_blank" rel="noopener noreferrer">ClassIQ (Smart way of marking attendance)</a>
+          </p>
         </div>
 
         {/* ── Ticker ── */}
