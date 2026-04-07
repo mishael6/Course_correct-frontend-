@@ -65,7 +65,7 @@ const UploadPage = () => {
 
         <div className="upload-row" style={{ display: 'flex', gap: '1rem' }}>
           <input type="number" name="year" placeholder="Level" value={formData.year} onChange={handleChange} required style={{ flex: 1 }} />
-          <input type="number" name="price" placeholder="Price ($)" value={formData.price} onChange={handleChange} required style={{ flex: 1 }} />
+          <input type="number" name="price" placeholder="Price (GHS)" value={formData.price} onChange={handleChange} required style={{ flex: 1 }} />
         </div>
 
         <input type="file" onChange={handleFile} required style={{ border: 'none', padding: '0.75rem 0' }} />
