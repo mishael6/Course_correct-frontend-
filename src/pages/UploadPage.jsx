@@ -59,7 +59,7 @@ const UploadPage = () => {
       {message && <p style={{ color: message.type === 'error' ? 'red' : 'green', margin: 0, fontWeight: 'bold' }}>{message.text}</p>}
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <input type="text" name="title" placeholder="Document Title (e.g., Final Exam 2023)" value={formData.title} onChange={handleChange} required />
+        <input type="text" name="title" placeholder="Document Title (e.g.,SOFTWARE ENGINEERING Final Exam 2023)" value={formData.title} onChange={handleChange} required />
         <input type="text" name="courseCode" placeholder="Course Code (e.g., CS101)" value={formData.courseCode} onChange={handleChange} required />
         <input type="text" name="institution" placeholder="Institution" value={formData.institution} onChange={handleChange} required />
 
